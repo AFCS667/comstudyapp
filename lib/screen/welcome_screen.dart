@@ -117,37 +117,37 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: const BoxDecoration(
-                      color: primaryColor,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Container(
+              //       width: 10,
+              //       height: 10,
+              //       decoration: const BoxDecoration(
+              //         color: primaryColor,
+              //         shape: BoxShape.circle,
+              //       ),
+              //     ),
+              //     const SizedBox(width: 8),
+              //     Container(
+              //       width: 10,
+              //       height: 10,
+              //       decoration: BoxDecoration(
+              //         color: Colors.grey,
+              //         shape: BoxShape.circle,
+              //       ),
+              //     ),
+              //     const SizedBox(width: 8),
+              //     Container(
+              //       width: 10,
+              //       height: 10,
+              //       decoration: BoxDecoration(
+              //         color: Colors.grey,
+              //         shape: BoxShape.circle,
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),
