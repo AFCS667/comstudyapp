@@ -1,6 +1,7 @@
+import 'package:comstudyapp/screen/meetup_screen.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
-import '../widgets/custom_bottom_nav.dart';
+import 'package:comstudyapp/screen/courses_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -17,7 +18,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final Color secondary = AppColors.secondary;
   final Color tertiary = AppColors.tertiary;
   final Color onSurface = AppColors.onSurface;
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +26,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 80, bottom: 120),
+            padding: const EdgeInsets.only(top: 80, bottom: 32),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -37,12 +38,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           Positioned(top: 0, left: 0, right: 0, child: _buildTopNav()),
-          const Positioned(bottom: 0, left: 0, right: 0, child: CustomBottomNav(currentIndex: 0)), // 0 for Home
         ],
       ),
     );
   }
-  
+
   Widget _buildTopNav() {
     return Container(
       height: 80,
@@ -61,9 +61,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 height: 40,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 2,
+                  ),
                   image: const DecorationImage(
-                    image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuC2F_7STGrmM1g3gHorAaPLmhkfcLq_zHAK045pmz5HDfVPLQSM71l7cgIaeUvBspd9VbU7o-67LYOCO8SIWqfUn0jcg95DeHB-KkSYahVjmXJOLDgGvpMSTuu9jUrgwoTTkyoEcOctUMXomnef8Y09ZEhvcgGikwdax_wtxHZyeYPAFVanXMAkIRfzQ3v-g7KyGH44csDHIc7fZJ002zw8IWJMxeWM3DNOq8GOkCc4vDnVmjY66GG4BjYBVNGcz7McsoI7_Klio29S'),
+                    image: NetworkImage(
+                      'https://lh3.googleusercontent.com/aida-public/AB6AXuC2F_7STGrmM1g3gHorAaPLmhkfcLq_zHAK045pmz5HDfVPLQSM71l7cgIaeUvBspd9VbU7o-67LYOCO8SIWqfUn0jcg95DeHB-KkSYahVjmXJOLDgGvpMSTuu9jUrgwoTTkyoEcOctUMXomnef8Y09ZEhvcgGikwdax_wtxHZyeYPAFVanXMAkIRfzQ3v-g7KyGH44csDHIc7fZJ002zw8IWJMxeWM3DNOq8GOkCc4vDnVmjY66GG4BjYBVNGcz7McsoI7_Klio29S',
+                    ),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -73,8 +78,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('WELCOME BACK,', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
-                  const Text('Bryan Carlos', style: TextStyle(color: Colors.white, fontFamily: 'Manrope', fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(
+                    'WELCOME BACK,',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  const Text(
+                    'Bryan Carlos',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Manrope',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -123,14 +144,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-               Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Explore', style: TextStyle(color: Color(0xFF26487A), fontFamily: 'Manrope', fontSize: 20, fontWeight: FontWeight.bold)),
-                  const Text('Categories', style: TextStyle(color: Color(0xFF26487A), fontFamily: 'Manrope', fontSize: 20, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Explore',
+                    style: TextStyle(
+                      color: Color(0xFF26487A),
+                      fontFamily: 'Manrope',
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    'Categories',
+                    style: TextStyle(
+                      color: Color(0xFF26487A),
+                      fontFamily: 'Manrope',
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
-              Text('SEE ALL', style: TextStyle(color: secondary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
+              Text(
+                'SEE ALL',
+                style: TextStyle(
+                  color: secondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -155,7 +200,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildCategoryCard(String title, IconData icon, Color iconColor) {
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const CoursesScreen()),
+        );
+      },
+      child: Container(
       width: 120,
       height: 120,
       decoration: BoxDecoration(
@@ -175,26 +227,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Icon(icon, color: iconColor),
           ),
           const SizedBox(height: 12),
-          Text(title, style: TextStyle(color: onSurface, fontSize: 14, fontWeight: FontWeight.bold)),
+          Text(
+            title,
+            style: TextStyle(
+              color: onSurface,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
+      ),
       ),
     );
   }
-
   Widget _buildProgress() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Your Progress', style: TextStyle(color: primary, fontFamily: 'Manrope', fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(
+            'Your Progress',
+            style: TextStyle(
+              color: primary,
+              fontFamily: 'Manrope',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
               ],
             ),
             padding: const EdgeInsets.all(20),
@@ -207,7 +278,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       borderRadius: BorderRadius.circular(16),
                       child: Image.network(
                         'https://lh3.googleusercontent.com/aida-public/AB6AXuDUT-4CSGsgztCenfy-dM87kMxd8zsRlZS_Q-2IQLmmGj6hDelkoKdmM75CfSE8jD-o2m8I1BMy7DjSKTKG8gfUGMA2C9oU5Wj-ixS_qpYIdecoDNA0sBjwT_o0L89vbBrmRrX6ZoRrvJ6o13_oL1h5Wgqb_ilJvNpwChCDBR9hSMEmq19U_rDuCbi-cnHf72_FytCvhw7q1T2Bwv8COl0-LPDGe8yIARZ-v0pWscX1tYsMPFZdPRcbcPT19wd3KTmXigM0jqk7Svv6',
-                        width: 90, height: 90, fit: BoxFit.cover,
+                        width: 90,
+                        height: 90,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -216,25 +289,67 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(color: const Color(0xFFB3F48B).withOpacity(0.3), borderRadius: BorderRadius.circular(12)),
-                            child: const Text('CONTINUING', style: TextStyle(color: Color(0xFF205200), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFB3F48B).withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text(
+                              'CONTINUING',
+                              style: TextStyle(
+                                color: Color(0xFF205200),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1,
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 8),
-                          const Text('Advanced UI Patterns', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, height: 1.2)),
+                          const Text(
+                            'Advanced UI Patterns',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              height: 1.2,
+                            ),
+                          ),
                           const SizedBox(height: 4),
-                          Text('Module 4: Cognitive Ergonomics', style: TextStyle(color: onBackground.withOpacity(0.6), fontSize: 12, fontWeight: FontWeight.w500)),
+                          Text(
+                            'Module 4: Cognitive Ergonomics',
+                            style: TextStyle(
+                              color: onBackground.withOpacity(0.6),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('72% Completed', style: TextStyle(color: onBackground.withOpacity(0.6), fontSize: 11, fontWeight: FontWeight.bold)),
-                    Text('12/16 Lessons', style: TextStyle(color: onBackground.withOpacity(0.6), fontSize: 11, fontWeight: FontWeight.bold)),
+                    Text(
+                      '72% Completed',
+                      style: TextStyle(
+                        color: onBackground.withOpacity(0.6),
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      '12/16 Lessons',
+                      style: TextStyle(
+                        color: onBackground.withOpacity(0.6),
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -245,15 +360,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     color: const Color(0xFFE3E2E6),
                     child: Row(
                       children: [
-                        Expanded(flex: 72, child: Container(color: const Color(0xFF98D772))),
+                        Expanded(
+                          flex: 72,
+                          child: Container(color: const Color(0xFF98D772)),
+                        ),
                         Expanded(flex: 28, child: Container()),
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -265,14 +383,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Upcoming Meetups', style: TextStyle(color: primary, fontFamily: 'Manrope', fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(
+            'Upcoming Meetups',
+            style: TextStyle(
+              color: primary,
+              fontFamily: 'Manrope',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
               color: const Color(0xFFFFF799),
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
-                BoxShadow(color: const Color(0xFFFFF799).withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 4)),
+                BoxShadow(
+                  color: const Color(0xFFFFF799).withOpacity(0.4),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
               ],
             ),
             padding: const EdgeInsets.all(24),
@@ -284,15 +414,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Row(
                       children: [
-                         Icon(Icons.calendar_month, size: 16, color: onBackground.withOpacity(0.6)),
-                         const SizedBox(width: 8),
-                         Text('Oct 24 • 18:30 PM', style: TextStyle(color: onBackground.withOpacity(0.8), fontSize: 12, fontWeight: FontWeight.bold)),
+                        Icon(
+                          Icons.calendar_month,
+                          size: 16,
+                          color: onBackground.withOpacity(0.6),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Oct 24 • 18:30 PM',
+                          style: TextStyle(
+                            color: onBackground.withOpacity(0.8),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Padding(
                       padding: const EdgeInsets.only(right: 80),
-                      child: Text('Design Critique: The Future of EdTech', style: TextStyle(fontFamily: 'Manrope', fontSize: 20, fontWeight: FontWeight.bold, height: 1.2)),
+                      child: Text(
+                        'Design Critique: The Future of EdTech',
+                        style: TextStyle(
+                          fontFamily: 'Manrope',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 24),
                     Row(
@@ -303,32 +452,53 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           'https://lh3.googleusercontent.com/aida-public/AB6AXuDNMoW4AVyXRBVftgklpVRCCBiplrN_wLWyRgPrAtcUR_hUQA4Cp2PE2m7fsfaGjK3_MpLbL6r2J3uFfabxD55vGrwXUnpl78QaZlApuBfXbFlmD4azK7UbrC6YJdEAcAjzSHpd5hiVxAyZx-P8Fznk52wui525bVa83oIgCqLgSRcUijOkZYEfS0QtZM-nJh5ouoO0_S8v9PkLew37Pyu_acoJy5JRfCLpxsPSzzdmXJdedt1uE8KmvT06gbwZRKDuHtnwLcF9R5jH',
                         ], '+14'),
                       ],
-                    )
+                    ),
                   ],
                 ),
                 Positioned(
                   top: 16,
                   right: 0,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Logika pendaftaran disini
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MeetupScreen(),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primary,
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
                     ),
-                    child: const Text('Join', style: TextStyle(fontWeight: FontWeight.bold)),
+
+                    child: const Text(
+                      'Join',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
                 Positioned(
                   bottom: -10,
                   right: -10,
-                  child: Icon(Icons.groups, size: 100, color: Colors.black.withOpacity(0.05)),
-                )
+                  child: Icon(
+                    Icons.groups,
+                    size: 100,
+                    color: Colors.black.withOpacity(0.05),
+                  ),
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -343,7 +513,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: CircleAvatar(
               radius: 16,
               backgroundColor: const Color(0xFFFFF799),
-              child: CircleAvatar(radius: 14, backgroundImage: NetworkImage(urls[i])),
+              child: CircleAvatar(
+                radius: 14,
+                backgroundImage: NetworkImage(urls[i]),
+              ),
             ),
           ),
         Transform.translate(
@@ -357,7 +530,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               border: Border.all(color: const Color(0xFFFFF799), width: 2),
             ),
             alignment: Alignment.center,
-            child: Text(extra, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            child: Text(
+              extra,
+              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ],

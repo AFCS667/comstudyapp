@@ -1,3 +1,4 @@
+import 'package:comstudyapp/screen/main_screen.dart';
 import 'package:comstudyapp/screen/signup_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -128,7 +129,14 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MainScreen(),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                     shape: RoundedRectangleBorder(

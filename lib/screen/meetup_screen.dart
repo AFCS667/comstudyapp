@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
-import '../widgets/custom_bottom_nav.dart';
 
 class MeetupScreen extends StatefulWidget {
   const MeetupScreen({super.key});
@@ -27,7 +26,7 @@ class _MeetupScreenState extends State<MeetupScreen> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 80, bottom: 120),
+            padding: const EdgeInsets.only(top: 80, bottom: 32),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -38,12 +37,6 @@ class _MeetupScreenState extends State<MeetupScreen> {
             ),
           ),
           Positioned(top: 0, left: 0, right: 0, child: _buildTopNav()),
-          const Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: CustomBottomNav(currentIndex: 3),
-          ),
         ],
       ),
       floatingActionButton: _buildFAB(),
@@ -428,7 +421,7 @@ class _MeetupScreenState extends State<MeetupScreen> {
 
   Widget _buildFAB() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 90),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [primary, primaryContainer],
