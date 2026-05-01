@@ -1,5 +1,5 @@
-const User = require('../models/User');
-const bcrypt = require('bcrypt');
+const User = require('../models/user');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
         await newUser.save();
         return res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -30,6 +30,6 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Server error' });
     }
 }
