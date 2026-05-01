@@ -1,5 +1,6 @@
-#Dependency directories
+#Backend Exceptions
 backend/node_modules/
+.env
 
 # Miscellaneous
 *.class
