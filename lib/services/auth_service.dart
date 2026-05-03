@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  final String baseUrl = "http://10.218.165.43:3000/users";
+  final String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost:3000/users';
 
   // Register a new user
   Future<bool> register(String name, String email, String password) async {

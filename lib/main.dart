@@ -1,8 +1,11 @@
-import 'package:comstudyapp/screen/quiz_evoluation_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:comstudyapp/screen/welcome_screen.dart';
 
-void main() {
+// jalankan .env
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env.flutter");
   runApp(const MyApp());
 }
 
