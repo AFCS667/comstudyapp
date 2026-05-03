@@ -51,11 +51,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final perfs = await SharedPreferences.getInstance();
 
-      String username = "User";
-      if(result['user'] != null && result['user']['username'] != null) {
+      String? username;
+
+      if (result['user'] != null) {
         username = result['user']['username'];
+      } else {
+        username = result['username'];
       }
-      await perfs.setString('username', username);
+      await perfs.setString('username', username ?? 'User');
 
       if (!mounted) return;
 
