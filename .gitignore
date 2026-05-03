@@ -1,6 +1,6 @@
 #Backend Exceptions
 backend/node_modules/
-.env
+backend/.env
 
 # Miscellaneous
 *.class
