@@ -37,7 +37,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-    //validasi format email sederhana
+    //validasi format email
     if (!_emailController.text.contains('@') ||
         !_emailController.text.contains('.')) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -79,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
 
       setState(() => _isLoading = false);
-
+      // sukses register
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Registration Successful!')),
@@ -89,6 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           MaterialPageRoute(builder: (context) => const MainScreen()),
         );
       } else {
+        // gagal register
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Registration Failed. Please try again.')),
         );
@@ -259,6 +260,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  // membuat ada loading icon
                   child: _isLoading ? const SizedBox(
                     height: 20,
                     width: 20,
