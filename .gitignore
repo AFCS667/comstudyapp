@@ -1,6 +1,7 @@
 #Backend Exceptions
 backend/node_modules/
-.env
+backend/.env.server
+.env.flutter
 
 # Miscellaneous
 *.class

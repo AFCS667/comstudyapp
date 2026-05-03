@@ -1,5 +1,6 @@
 import 'package:comstudyapp/screen/main_screen.dart';
 import 'package:comstudyapp/screen/login_screen.dart';
+import 'package:comstudyapp/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
@@ -14,6 +15,96 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Warna utama disamakan dengan desain
   final Color primaryColor = const Color(0xFF1E3A8A);
   bool _isTermsAccepted = false; // State untuk checkbox
+  bool _isLoading = false;
+
+  // Controller untuk input field
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  // mengatasi logika pendaftaran
+  void _handleSignUp() async {
+
+    //validasi jika ada field yang kosong
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    //validasi format email
+    if (!_emailController.text.contains('@') ||
+        !_emailController.text.contains('.')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid email address')),
+      );
+      return;
+    }
+
+    //validasi panjang password minimal 6 karakter
+    if (_passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password must be at least 6 characters')),
+      );
+      return;
+    }
+
+    //validasi jika tombol terms belum di centang
+    if (!_isTermsAccepted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please Accept the Terms & Conditions')),
+      );
+      return;
+    }
+
+    // validasi jika password dan confirm password tidak sama
+    if(_passwordController.text != _confirmPasswordController.text){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password does not match!')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    bool success = await AuthService().register(
+      _nameController.text.trim(), 
+      _emailController.text.trim(),
+      _passwordController.text,
+      );
+
+      setState(() => _isLoading = false);
+      // sukses register
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registration Successful!')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+        );
+      } else {
+        // gagal register
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registration Failed. Please try again.')),
+        );
+      }
+  }
+
+  // menghapus controller saat widget dihapus untuk mencegah memory leak
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +164,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 label: 'Full Name',
                 hint: 'Enter your full name',
                 icon: Icons.person_outline,
+                controller: _nameController,
               ),
               const SizedBox(height: 16),
 
@@ -81,6 +173,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 hint: 'name@example.com',
                 icon: Icons.mail_outline,
                 keyboardType: TextInputType.emailAddress,
+                controller: _emailController,
               ),
               const SizedBox(height: 16),
 
@@ -89,6 +182,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 hint: 'Create a password',
                 icon: Icons.lock_outline,
                 isPassword: true,
+                controller: _passwordController,
               ),
               const SizedBox(height: 16),
 
@@ -97,6 +191,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 hint: 'Repeat your password',
                 icon: Icons.verified_user_outlined,
                 isPassword: true,
+                controller: _confirmPasswordController,
               ),
               const SizedBox(height: 20),
 
@@ -158,31 +253,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Logika pendaftaran disini
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MainScreen(),
-                      ),
-                    );
-                  },
+                  onPressed: _isLoading ? null : _handleSignUp,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      fontSize: 18,
+                  // membuat ada loading icon
+                  child: _isLoading ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                      strokeWidth: 2,)
+                    ): const Text(
+                      'Sign Up',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
                     ),
+                  )
                   ),
-                ),
-              ),
               const SizedBox(height: 24),
 
               // 7. Divider "OR JOIN WITH"
@@ -266,6 +359,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     required String label,
     required String hint,
     required IconData icon,
+    required TextEditingController controller,
     bool isPassword = false,
     TextInputType keyboardType = TextInputType.text,
   }) {
@@ -282,6 +376,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         const SizedBox(height: 8),
         TextField(
+          controller: controller,
           obscureText: isPassword,
           keyboardType: keyboardType,
           decoration: InputDecoration(
