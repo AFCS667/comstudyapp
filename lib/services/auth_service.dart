@@ -8,7 +8,7 @@ class AuthService {
   // Register a new user
   Future<bool> register(String name, String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/Register'),
+      Uri.parse('$baseUrl/register'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'username': name, 'email': email, 'password': password}),
     ).timeout(const Duration(seconds: 10), 
@@ -22,7 +22,7 @@ class AuthService {
   Future<Map<String, dynamic>> login(String email, String password) async {
     try{
       final response = await http.post(
-        Uri.parse('$baseUrl/Login'),
+        Uri.parse('$baseUrl/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
       );

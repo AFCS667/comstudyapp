@@ -1,6 +1,7 @@
 import 'package:comstudyapp/screen/main_screen.dart';
 import 'package:comstudyapp/screen/signup_screen.dart';
 import 'package:comstudyapp/services/auth_service.dart';
+import 'package:comstudyapp/services/session_manager.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -28,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleLogin() async {
-    if(_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter both email and password')),
       );
@@ -37,22 +38,28 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    final result = await _authService.login(_emailController.text, _passwordController.text);
+    final result = await _authService.login(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    print("DEBUG: response from server $result");
 
     setState(() => _isLoading = false);
 
-    if(result['status'] == 'success') {
+    if(result.containsKey('token')){
+      await SessionManager.saveToken(result['token']);
+      if(!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'] ?? 'Login failed')),
+        SnackBar(content: Text(result['message'] ?? 'invalid email or password')),
       );
     }
-
-
   }
 
   @override
@@ -114,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 hint: 'name@example.com',
                 icon: Icons.mail_outline,
                 keyboardType: TextInputType.emailAddress,
-                controller:_emailController,
+                controller: _emailController,
               ),
               const SizedBox(height: 20),
               Row(
@@ -181,16 +188,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'Login',
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 32),

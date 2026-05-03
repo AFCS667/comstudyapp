@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const bycrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 exports.loginUser = async (req, res) => {
     try {
@@ -7,7 +8,7 @@ exports.loginUser = async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ status: 'error', message: 'User not found' });
         }
 
         const isMatch = await bycrypt.compare(password, user.password);
@@ -15,9 +16,12 @@ exports.loginUser = async (req, res) => {
             return res.status(401).json({ status: 'error', message: 'wrong password '})
         }
 
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
         res.status(200).json({
             status: 'success',
             message: 'Login successful',
+            token: token,
             user: {id: user._id, name: user.name }
         });
     } catch (error) {
