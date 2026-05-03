@@ -3,6 +3,7 @@ import 'package:comstudyapp/screen/signup_screen.dart';
 import 'package:comstudyapp/services/auth_service.dart';
 import 'package:comstudyapp/services/session_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -43,13 +44,20 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text,
     );
 
-    print("DEBUG: response from server $result");
-
     setState(() => _isLoading = false);
 
-    if(result.containsKey('token')){
+    if (result.containsKey('token')) {
       await SessionManager.saveToken(result['token']);
-      if(!mounted) return;
+
+      final perfs = await SharedPreferences.getInstance();
+
+      String username = "User";
+      if(result['user'] != null && result['user']['username'] != null) {
+        username = result['user']['username'];
+      }
+      await perfs.setString('username', username);
+
+      if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
@@ -57,7 +65,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'] ?? 'invalid email or password')),
+        SnackBar(
+          content: Text(result['message'] ?? 'invalid email or password'),
+        ),
       );
     }
   }
