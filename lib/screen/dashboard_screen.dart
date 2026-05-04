@@ -1,6 +1,6 @@
 import 'package:comstudyapp/screen/meetup_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme/app_colors.dart';
 import 'package:comstudyapp/screen/courses_screen.dart';
 
@@ -30,10 +30,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _loadUserData() async {
     // Simulasi pengambilan data user dari server
-    final perfs = await SharedPreferences.getInstance();
-    setState(() {
-      _username = perfs.getString('username') ?? 'User';
-    });
+    final user = Supabase.instance.client.auth.currentUser;
+    if(user != null){
+      setState(() {
+        _username = user.userMetadata?['username'] ?? user.email ?? 'User';
+      });
+    }
   }
 
   @override
