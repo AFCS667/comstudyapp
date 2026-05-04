@@ -1,9 +1,7 @@
 import 'package:comstudyapp/screen/main_screen.dart';
 import 'package:comstudyapp/screen/signup_screen.dart';
 import 'package:comstudyapp/services/auth_service.dart';
-import 'package:comstudyapp/services/session_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
