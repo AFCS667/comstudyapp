@@ -3,6 +3,8 @@ import 'package:comstudyapp/screen/signup_screen.dart';
 import 'package:comstudyapp/services/auth_service.dart';
 import 'package:comstudyapp/services/session_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -37,27 +39,29 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     setState(() => _isLoading = true);
-
-    final result = await _authService.login(
-      _emailController.text,
-      _passwordController.text,
-    );
-
-    print("DEBUG: response from server $result");
-
-    setState(() => _isLoading = false);
-
-    if(result.containsKey('token')){
-      await SessionManager.saveToken(result['token']);
-      if(!mounted) return;
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
+    try {
+      final result = await _authService.login(
+        _emailController.text,
+        _passwordController.text,
       );
-    } else {
+
+      setState(() => _isLoading = false);
+
+      if(result.user != null){
+        if(!mounted) return;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+        );
+      }
+    } on AuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'] ?? 'invalid email or password')),
+        SnackBar(content: Text('Login Failed: ${e.toString()}')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An unexpected error occurred: ${e.toString()}')),
       );
     }
   }

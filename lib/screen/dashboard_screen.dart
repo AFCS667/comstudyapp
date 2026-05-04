@@ -1,5 +1,6 @@
 import 'package:comstudyapp/screen/meetup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import 'package:comstudyapp/screen/courses_screen.dart';
 
@@ -18,6 +19,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final Color secondary = AppColors.secondary;
   final Color tertiary = AppColors.tertiary;
   final Color onSurface = AppColors.onSurface;
+
+  String _username = "User";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    // Simulasi pengambilan data user dari server
+    final perfs = await SharedPreferences.getInstance();
+    setState(() {
+      _username = perfs.getString('username') ?? 'User';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +104,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       letterSpacing: 1,
                     ),
                   ),
-                  const Text(
-                    'Bryan Carlos',
+                  Text(
+                    _username,
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'Manrope',
@@ -208,38 +225,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
       },
       child: Container(
-      width: 120,
-      height: 120,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F3F7),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16),
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F3F7),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(icon, color: iconColor),
             ),
-            child: Icon(icon, color: iconColor),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: TextStyle(
-              color: onSurface,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: TextStyle(
+                color: onSurface,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
+
   Widget _buildProgress() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),

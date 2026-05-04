@@ -3,6 +3,7 @@ import 'package:comstudyapp/screen/login_screen.dart';
 import 'package:comstudyapp/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -21,11 +22,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   // mengatasi logika pendaftaran
   void _handleSignUp() async {
-
     //validasi jika ada field yang kosong
     if (_nameController.text.isEmpty ||
         _emailController.text.isEmpty ||
@@ -63,37 +64,47 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     // validasi jika password dan confirm password tidak sama
-    if(_passwordController.text != _confirmPasswordController.text){
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password does not match!')),
-      );
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Password does not match!')));
       return;
     }
 
     setState(() => _isLoading = true);
 
-    bool success = await AuthService().register(
-      _nameController.text.trim(), 
-      _emailController.text.trim(),
-      _passwordController.text,
+    try {
+      final response = await AuthService().register(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
+    
+    setState(() => _isLoading = false );
 
-      setState(() => _isLoading = false);
-      // sukses register
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration Successful!')),
-        );
+      if (response.user != null) {
+        if(!mounted) return;
+
+        // Registration successful
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Registration Successful!')));
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainScreen()),
         );
-      } else {
-        // gagal register
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration Failed. Please try again.')),
-        );
       }
+    } on AuthException catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration Failed: $e')),
+      );
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An unexpected error occurred: $e')),
+      );
+    }
   }
 
   // menghapus controller saat widget dihapus untuk mencegah memory leak
@@ -261,21 +272,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   // membuat ada loading icon
-                  child: _isLoading ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,)
-                    ): const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                    ),
-                  )
-                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+              ),
               const SizedBox(height: 24),
 
               // 7. Divider "OR JOIN WITH"
