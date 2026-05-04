@@ -1,37 +1,26 @@
-import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
-  final String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost:3000/auth';
+  final SupabaseClient _supabase = Supabase.instance.client;
 
-  // Register a new user
-  Future<bool> register(String name, String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/auth/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'username': name, 'email': email, 'password': password}),
-    ).timeout(const Duration(seconds: 10), 
-    onTimeout: () {
-      // Handle timeout
-      return http.Response('Error: Request timed out', 408);
-    });
-    return response.statusCode == 201; // Placeholder for successful registration
+  // Register
+  Future<AuthResponse> register({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    return await _supabase.auth.signUp(
+      email: email,
+      password: password,
+      data: {'username': name},
+    );
   }
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    try{
-      final response = await http.post(
-        Uri.parse('$baseUrl/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
-      );
-      return jsonDecode(response.body);
-    } catch (e) {
-      return {'status': 'error', 'message': e.toString()};
-    }
-
-     // Placeholder for successful login response
-
+  // Login
+  Future<AuthResponse> login(String email, String password) async {
+    return await _supabase.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
   }
 }
