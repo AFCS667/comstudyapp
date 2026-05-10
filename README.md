@@ -5,8 +5,6 @@ We used flutter framework for the Front-end and Supabase as the DataBase as well
 
 Academic Atelier is a community-app based learning. Connect with all people from around the world in the app to learn together. With our Forum Discussion feature you can make a question about your study to the people in the app. You can also check your learning progression about your current study in the app.
 
-----------------------------------------------------------------------------------------------------------
-
 ## Getting Started
 
 This project is based on Flutter.
