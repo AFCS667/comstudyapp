@@ -81,7 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withAlpha(20),
                     width: 2,
                   ),
                   image: const DecorationImage(
@@ -100,7 +100,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Text(
                     'WELCOME BACK,',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withAlpha(179), // 0.7 * 255
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
@@ -136,13 +136,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
-            Icon(Icons.search, color: onBackground.withOpacity(0.6)),
+            Icon(Icons.search, color: onBackground.withAlpha(153)), // 0.6 * 255
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 'Search for courses, mentors...',
                 style: TextStyle(
-                  color: onBackground.withOpacity(0.6),
+                  color: onBackground.withAlpha(153), // 0.6 * 255
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -240,7 +240,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.1),
+                color: iconColor.withAlpha(26), // 0.1 * 255
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(icon, color: iconColor),
@@ -282,7 +282,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withAlpha(13), // 0.05 * 255
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -314,7 +314,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFB3F48B).withOpacity(0.3),
+                              color: const Color(0xFFB3F48B).withAlpha(77), // 0.3 * 255
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Text(
@@ -340,7 +340,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Text(
                             'Module 4: Cognitive Ergonomics',
                             style: TextStyle(
-                              color: onBackground.withOpacity(0.6),
+                              color: onBackground.withAlpha(153), // 0.6 * 255
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -357,7 +357,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Text(
                       '72% Completed',
                       style: TextStyle(
-                        color: onBackground.withOpacity(0.6),
+                        color: onBackground.withAlpha(153), // 0.6 * 255
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
@@ -365,7 +365,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Text(
                       '12/16 Lessons',
                       style: TextStyle(
-                        color: onBackground.withOpacity(0.6),
+                        color: onBackground.withAlpha(153), // 0.6 * 255
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
@@ -419,7 +419,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFFF799).withOpacity(0.4),
+                  color: const Color(0xFFFFF799).withAlpha(102), // 0.4 * 255
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -437,13 +437,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Icon(
                           Icons.calendar_month,
                           size: 16,
-                          color: onBackground.withOpacity(0.6),
+                          color: onBackground.withAlpha(153), // 0.6 * 255
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'Oct 24 • 18:30 PM',
                           style: TextStyle(
-                            color: onBackground.withOpacity(0.8),
+                            color: onBackground.withAlpha(204), // 0.8 * 255
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
@@ -513,7 +513,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Icon(
                     Icons.groups,
                     size: 100,
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withAlpha(13), // 0.05 * 255
                   ),
                 ),
               ],
@@ -546,7 +546,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             height: 32,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withAlpha(26), // 0.1 * 255
               border: Border.all(color: const Color(0xFFFFF799), width: 2),
             ),
             alignment: Alignment.center,

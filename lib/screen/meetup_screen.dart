@@ -63,7 +63,7 @@ class _MeetupScreenState extends State<MeetupScreen> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withAlpha(51), // 0.2 * 255
                     width: 2,
                   ),
                   image: const DecorationImage(
@@ -163,7 +163,7 @@ class _MeetupScreenState extends State<MeetupScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withAlpha(230), // 0.9 * 255
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(Icons.my_location, color: primary),
@@ -243,15 +243,15 @@ class _MeetupScreenState extends State<MeetupScreen> {
             bgColor: highlight,
             titleColor: onSurface,
             tagText: 'Offline',
-            tagColor: onSurface.withOpacity(0.1),
-            tagTextColor: onSurface.withOpacity(0.6),
+            tagColor: onSurface.withAlpha(26), // 0.1 * 255
+            tagTextColor: onSurface.withAlpha(153), // 0.6 * 255
             avatars: [
               'https://lh3.googleusercontent.com/aida-public/AB6AXuBvWx4Jqc7N_ECLBf8xxUiGu8S10crECLTc2on_D2bgykhHHR7JN_ImY2jPF_y5MpY_2ARrFfM0pTkLcZUQSxCT0UAW7Zf7cAfjs4ECQgtHTY63BHmRuUbN-XWc6o_o-0kqXiSb7lmJATRNt-9KBO7nzfAUHF2nn-bsIcPqO4RKY6_Dgjorkd-xV6W8QHu2SjX8sK3ZAd-s0vJ1AOeNR4fAgKMHDblnKrykKYIMZ1J3KozVk_1L9cIqbZatuKHqhHkSjaR4OfNyG-AQ',
               'https://lh3.googleusercontent.com/aida-public/AB6AXuCI713G6nnV-Kzs3ba3kJZDddM3ZLNPp374EpzNP02vTPx8QQVbVzsq1Z0teznIlAcmHwJZ20lD3nRqEB0JCt75w7puLQRBdUOw7HcEIGcF_GZbG4jQNBg9Z-zRUlesX6thRIaOJj0YyU8iKIPMKHTMlZwHFJJGkjabeD6kKJZ6Q67lJGQenOK6B98LUdkEqaBLgl5-gsrj1PdMwIDVjy9NEHggGX4Oh-hyytn5Kb3GvL7aPtgllUQ24Oja9x4jkT4p0cUQQWk6KD1L',
             ],
             extraCount: '+8',
             buttonText: 'Details',
-            buttonColor: onSurface.withOpacity(0.1),
+            buttonColor: onSurface.withAlpha(26), // 0.1 * 255
             buttonTextColor: onSurface,
           ),
           const SizedBox(height: 24),
@@ -322,13 +322,13 @@ class _MeetupScreenState extends State<MeetupScreen> {
                   Icon(
                     Icons.calendar_today,
                     size: 14,
-                    color: titleColor.withOpacity(0.7),
+                    color: titleColor.withAlpha(179), // 0.7 * 255
                   ),
                   const SizedBox(width: 8),
                   Text(
                     dateLocation,
                     style: TextStyle(
-                      color: titleColor.withOpacity(0.7),
+                      color: titleColor.withAlpha(179), // 0.7 * 255
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -360,7 +360,7 @@ class _MeetupScreenState extends State<MeetupScreen> {
                           height: 40,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: titleColor.withOpacity(0.1),
+                            color: titleColor.withAlpha(26), // 0.1 * 255
                             border: Border.all(color: bgColor, width: 2),
                           ),
                           alignment: Alignment.center,

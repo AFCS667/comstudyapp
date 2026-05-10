@@ -42,22 +42,25 @@ class _LoginScreenState extends State<LoginScreen> {
         _emailController.text,
         _passwordController.text,
       );
-
+      
       setState(() => _isLoading = false);
 
       if(result.user != null){
-        if(!mounted) return;
-
+      if(!mounted) return;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainScreen()),
         );
       }
     } on AuthException catch (e) {
+      if(!mounted) return;
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login Failed: ${e.toString()}')),
       );
     } catch (e) {
+      if(!mounted) return;
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('An unexpected error occurred: ${e.toString()}')),
       );
