@@ -95,11 +95,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
       }
     } on AuthException catch (e) {
+      if(!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration Failed: $e')),
       );
     } catch (e) {
+      if(!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('An unexpected error occurred: $e')),

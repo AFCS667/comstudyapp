@@ -14,7 +14,7 @@ class CustomBottomNav extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1B1B1E).withOpacity(0.06),
+            color: const Color(0xFF1B1B1E).withAlpha(15), // 0.06 * 255
             blurRadius: 24,
             offset: const Offset(0, -4),
           ),
@@ -24,17 +24,44 @@ class CustomBottomNav extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(icon: Icons.home_filled, label: 'Home', isActive: currentIndex == 0, onTap: () => onTap?.call(0)),
-          _buildNavItem(icon: Icons.menu_book, label: 'Courses', isActive: currentIndex == 1, onTap: () => onTap?.call(1)),
-          _buildNavItem(icon: Icons.forum, label: 'Community', isActive: currentIndex == 2, onTap: () => onTap?.call(2)),
-          _buildNavItem(icon: Icons.groups, label: 'Meetups', isActive: currentIndex == 3, onTap: () => onTap?.call(3)),
+          _buildNavItem(
+            icon: Icons.home_filled,
+            label: 'Home',
+            isActive: currentIndex == 0,
+            onTap: () => onTap?.call(0),
+          ),
+          _buildNavItem(
+            icon: Icons.menu_book,
+            label: 'Courses',
+            isActive: currentIndex == 1,
+            onTap: () => onTap?.call(1),
+          ),
+          _buildNavItem(
+            icon: Icons.forum,
+            label: 'Community',
+            isActive: currentIndex == 2,
+            onTap: () => onTap?.call(2),
+          ),
+          _buildNavItem(
+            icon: Icons.groups,
+            label: 'Meetups',
+            isActive: currentIndex == 3,
+            onTap: () => onTap?.call(3),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem({required IconData icon, required String label, required bool isActive, VoidCallback? onTap}) {
-    final color = isActive ? const Color(0xFF406093) : const Color(0xFF1B1B1E).withOpacity(0.6);
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required bool isActive,
+    VoidCallback? onTap,
+  }) {
+    final color = isActive
+        ? const Color(0xFF406093)
+        : const Color(0xFF1B1B1E).withAlpha(153); // 0.6 * 255
     final bgColor = isActive ? const Color(0xFFF5F3F7) : Colors.transparent;
 
     return GestureDetector(
@@ -42,13 +69,23 @@ class CustomBottomNav extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(16)),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, color: color),
             const SizedBox(height: 4),
-            Text(label, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
       ),
