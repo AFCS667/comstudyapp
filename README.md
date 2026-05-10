@@ -22,6 +22,8 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 "# ComunityStudyApp" 
 
+## How To Run & Use Academic Atelier
+
 To get the app up & running you can make your own .env file. By inserting your Supabase Project URL and the key to your database, you can start the app.
 
 NOTE: This is our first project using flutter, it might not be the best nor efficient to use. But it will be usable atleast.
