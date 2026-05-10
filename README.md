@@ -1,9 +1,12 @@
 # Academic Atelier Project
 
 This is a class project.
-We used flutter framework for the Front-end and Supabase as the DataBase as well as the Back-end.
+We used flutter for the Front-end and Supabase as the DataBase as well as the Back-end.
 
-Academic Atelier is a community-app based learning. Connect with all people from around the world in the app to learn together. With our Forum Discussion feature you can make a question about your study to the people in the app. You can also check your learning progression about your current study in the app.
+Academic Atelier is a community-app based learning. Connect with all people from around the world in the app to learn together. 
+With our Forum Discussion feature you can make a question about your study to the people in the app. 
+You can also check your learning progression about your current study through the app. 
+There will be more feature available, but right now we will only make the Forum and Progression for the upcoming release.
 
 ## Getting Started
 
@@ -20,3 +23,7 @@ samples, guidance on mobile development, and a full API reference.
 "# ComunityStudyApp" 
 
 To get the app up & running you can make your own .env file. By inserting your Supabase Project URL and the key to your database, you can start the app.
+
+NOTE: This is our first project using flutter, it might not be fast nor efficient to use. But it will be usable atleast.
+
+P.S RealBlueZ
