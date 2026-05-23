@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:comstudyapp/screen/welcome_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+final supabase = Supabase.instance.client;
 // jalankan .env
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
