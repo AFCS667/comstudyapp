@@ -215,9 +215,10 @@ class _NewQuestionScreenState extends State<NewQuestionScreen> {
 
   Widget _buildCourseDropdown() {
     final courses = [
-      'Human Computer Interaction',
-      'Mobile Application Development',
-      'Research Methodology',
+      'Advanced Typhography',
+      'User Experience Design',
+      'Digital Curation Systems',
+      'History of Modern Art',
     ];
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
