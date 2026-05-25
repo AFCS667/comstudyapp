@@ -24,12 +24,20 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   Future<void> _loadForumPosts() async {
     try {
-      final data = await supabase.from('posts').select().order('created_at', ascending: false);
+      final data = await supabase.from('posts').select('*, replies(id)').order('created_at', ascending: false);
 
       setState(() {
-        _forumPosts = (data as List).map((postJson) => ForumPost.fromJson(postJson)).toList();
+        _forumPosts = (data as List).map((postJson){
+          final List repliesData = postJson['replies'] ?? [];
+          final int totalRepliesCount = repliesData.length;
+          postJson['replies'] = totalRepliesCount;
+          return ForumPost.fromJson(postJson);
+        }).toList();
+
         _isLoading = false;
+
       });
+
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -52,16 +60,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
   }
 
   Future<void> _navigateToDetail(ForumPost post) async {
-    final refresh = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => ForumDetailScreen(post: post)),
     );
-    if (refresh == true) {
-      setState(() {
-        _isLoading = true;
-      });
       _loadForumPosts();
-    }
   }
 
   @override

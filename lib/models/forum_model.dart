@@ -67,11 +67,22 @@ class ForumReply{
   });
 
   factory ForumReply.fromJson(Map<String, dynamic> json) {
+
+    String formattedTime = 'Just now';
+    if (json['created_at'] != null) {
+      try {
+        final dateTime = DateTime.parse(json['created_at']).toLocal();
+        final hour = dateTime.hour.toString().padLeft(2, '0');
+        final minute = dateTime.minute.toString().padLeft(2, '0');
+        formattedTime = '$hour:$minute';
+      } catch (_) {}
+    }
+
     return ForumReply(
-      id: json['id'].toString(),
+      id: json['id']?.toString() ?? '',
       avatarUrl: json['avatar_url'] ?? '',
-      senderName: json['sender_name'] ?? '',
-      time: json['time'] ?? '',
+      senderName: json['sender_name'] ?? 'Anonymous',
+      time: formattedTime,
       message: json['message'] ?? '',
     );
   }
@@ -81,7 +92,6 @@ class ForumReply{
       'post_id': postId,
       'avatar_url': avatarUrl,
       'sender_name': senderName,
-      'time': time,
       'message': message,
     };
   }

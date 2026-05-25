@@ -15,12 +15,38 @@ class _NewQuestionScreenState extends State<NewQuestionScreen> {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _detailsController = TextEditingController();
+  final FocusNode _detailsFocusNode = FocusNode();
 
   @override
   void dispose() {
     _titleController.dispose();
     _detailsController.dispose();
     super.dispose();
+  }
+
+  void _insertMarkdown(String openTag, String closeTag) {
+    final text = _detailsController.text;
+    final selection = _detailsController.selection;
+
+  int start = selection.start;
+    int end = selection.end;
+    if (start < 0 || end < 0) {
+      start = text.length;
+      end = text.length;
+    }
+
+  final selectedText = text.substring(start, end);
+  final replacement = '$openTag$selectedText$closeTag';
+    
+  final newText = text.replaceRange(start, end, replacement);
+
+  setState(() {
+      _detailsController.text = newText;
+      _detailsFocusNode.requestFocus();
+      _detailsController.selection = TextSelection.collapsed(
+        offset: start + openTag.length + selectedText.length,
+      );
+    });
   }
 
   Future<void> _submitForm() async {
@@ -185,8 +211,13 @@ class _NewQuestionScreenState extends State<NewQuestionScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
+
+                  _buildMarkdownToolbar(),
+                  const Divider(height: 1, color: AppColors.surfaceContainerHigh),
+
                   TextField(
                     controller: _detailsController,
+                    focusNode: _detailsFocusNode,
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     style: const TextStyle(
@@ -208,6 +239,41 @@ class _NewQuestionScreenState extends State<NewQuestionScreen> {
             ),
           ),
           _buildBottomActions(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMarkdownToolbar() {
+    return Container(
+      color: AppColors.surfaceContainerLow.withValues(alpha: 0.5),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.format_bold, size: 20),
+            tooltip: 'Bold',
+            onPressed: () => _insertMarkdown('**', '**'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.format_italic, size: 20),
+            tooltip: 'Italic',
+            onPressed: () => _insertMarkdown('*', '*'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.format_underlined, size: 20),
+            tooltip: 'Underline',
+            onPressed: () => _insertMarkdown('<u>', '</u>'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.code, size: 20),
+            tooltip: 'Code Block',
+            onPressed: () => _insertMarkdown('```\n', '\n```'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.format_list_bulleted, size: 20),
+            tooltip: 'List Item',
+            onPressed: () => _insertMarkdown('- ', ''),
+          ),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:comstudyapp/main.dart';
 import 'package:comstudyapp/models/forum_model.dart';
 import 'package:comstudyapp/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ForumDetailScreen extends StatefulWidget {
   final ForumPost post;
@@ -31,7 +32,7 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
 
       setState(() {
         widget.post.repliesList.clear();
-        
+
         for (var replyJson in (data as List)) {
           widget.post.repliesList.add(ForumReply.fromJson(replyJson));
         }
@@ -54,24 +55,54 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
 
     try {
       final user = supabase.auth.currentUser;
-      final String displayName = user?.userMetadata?['username'] ?? 
-                                 user?.email?.split('@').first;
+      final String displayName =
+          user?.userMetadata?['username'] ?? user?.email?.split('@').first;
 
+      if (widget.post.id.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Post ID is missing. Cannot send reply.'),
+          ),
+        );
+        return;
+      }
+
+      final currTime = DateTime.now().toLocal();
+      final String currTimeStr = '${currTime.hour.toString().padLeft(2, '0')}:${currTime.minute.toString().padLeft(2, '0')}';
       await supabase.from('replies').insert({
         'post_id': widget.post.id,
-        'avatar_url': 'https://api.dicebear.com/7.x/avataaars/svg?seed=${Uri.encodeComponent(displayName)}',
+        'avatar_url':
+            'https://api.dicebear.com/7.x/avataaars/svg?seed=${Uri.encodeComponent(displayName)}',
         'sender_name': displayName,
         'message': messageText,
+        'time': currTimeStr,
       });
-      
-      await supabase
-          .from('posts')
-          .update({'replies': widget.post.replies + 1})
-          .eq('id', widget.post.id);
+
+      setState(() {
+        widget.post.replies = widget.post.replies + 1;
+      });
+
+      try {
+        await supabase
+            .from('posts')
+            .update({'replies': widget.post.replies + 1})
+            .eq('id', widget.post.id);
+      } catch (updateError) {
+        debugPrint('Error updating reply count: $updateError');
+      }
 
       _loadReplies();
     } catch (e) {
       debugPrint("Exception saving reply: $e");
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to send reply. Please try again.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
     }
   }
 
@@ -98,14 +129,19 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
             ),
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
-              
+
               onPressed: () => Navigator.of(context).pop(true),
             ),
           ),
         ),
         title: const Text(
           'Discussion Thread',
-          style: TextStyle(color: Colors.white, fontFamily: 'Manrope', fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Manrope',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
       ),
       body: Column(
@@ -120,33 +156,46 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
                   const SizedBox(height: 32),
                   const Text(
                     'REPLIES',
-                    style: TextStyle(color: AppColors.secondary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                    style: TextStyle(
+                      color: AppColors.secondary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
+                    ),
                   ),
                   const SizedBox(height: 16),
-                  
-                  
+
                   _isLoadingReplies
-                      ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ),
+                        )
                       : widget.post.repliesList.isEmpty
-                          ? const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 32),
-                              child: Center(
-                                child: Text(
-                                  'No replies yet. Be the first to comment!',
-                                  style: TextStyle(color: AppColors.onSurfaceVariant, fontSize: 14, fontStyle: FontStyle.italic),
-                                ),
+                      ? const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 32),
+                          child: Center(
+                            child: Text(
+                              'No replies yet. Be the first to comment!',
+                              style: TextStyle(
+                                color: AppColors.onSurfaceVariant,
+                                fontSize: 14,
+                                fontStyle: FontStyle.italic,
                               ),
-                            )
-                          : ListView.separated(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: widget.post.repliesList.length,
-                              separatorBuilder: (_, __) => const SizedBox(height: 12),
-                              itemBuilder: (context, index) {
-                                final reply = widget.post.repliesList[index];
-                                return _buildReplyItem(reply: reply);
-                              },
                             ),
+                          ),
+                        )
+                      : ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: widget.post.repliesList.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final reply = widget.post.repliesList[index];
+                            return _buildReplyItem(reply: reply);
+                          },
+                        ),
                 ],
               ),
             ),
@@ -171,35 +220,77 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundImage: widget.post.avatarUrl.startsWith('http') ? NetworkImage(widget.post.avatarUrl) : null,
+                backgroundImage: widget.post.avatarUrl.startsWith('http')
+                    ? NetworkImage(widget.post.avatarUrl)
+                    : null,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.post.meta, style: const TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold, fontSize: 14)),
+                    Text(
+                      widget.post.meta,
+                      style: const TextStyle(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          Text(widget.post.title, style: const TextStyle(color: AppColors.onSurface, fontFamily: 'Manrope', fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(
+            widget.post.title,
+            style: const TextStyle(
+              color: AppColors.onSurface,
+              fontFamily: 'Manrope',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 14),
-          Text(widget.post.excerpt, style: const TextStyle(color: AppColors.onSurfaceVariant, fontSize: 15, height: 1.5)),
+          MarkdownBody(
+            data: widget.post.excerpt,
+            selectable: true,
+            styleSheet: MarkdownStyleSheet(
+              p: const TextStyle(
+                color: AppColors.onSurfaceVariant,
+                fontSize: 15,
+                height: 1.5,
+              ),
+            ),
+          ),
           const SizedBox(height: 24),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: widget.post.tags
-                .map((tag) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(color: AppColors.surfaceContainerHigh, borderRadius: BorderRadius.circular(8)),
-                      child: Text(tag, style: const TextStyle(color: AppColors.primary, fontSize: 10, fontWeight: FontWeight.bold)),
-                    ))
+                .map(
+                  (tag) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceContainerHigh,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      tag,
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )
                 .toList(),
-          )
+          ),
         ],
       ),
     );
@@ -211,7 +302,9 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.surfaceContainerHigh.withValues(alpha: 0.5)),
+        border: Border.all(
+          color: AppColors.surfaceContainerHigh.withValues(alpha: 0.5),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,16 +313,38 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
             children: [
               CircleAvatar(
                 radius: 16,
-                backgroundImage: reply.avatarUrl.startsWith('http') ? NetworkImage(reply.avatarUrl) : null,
+                backgroundImage: reply.avatarUrl.startsWith('http')
+                    ? NetworkImage(reply.avatarUrl)
+                    : null,
               ),
               const SizedBox(width: 12),
-              Text(reply.senderName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.onSurface)),
+              Text(
+                reply.senderName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  color: AppColors.onSurface,
+                ),
+              ),
               const Spacer(),
-              Text(reply.time, style: const TextStyle(color: AppColors.onSurfaceVariant, fontSize: 10)),
+              Text(
+                reply.time,
+                style: const TextStyle(
+                  color: AppColors.onSurfaceVariant,
+                  fontSize: 10,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
-          Text(reply.message, style: const TextStyle(fontSize: 14, color: AppColors.onSurfaceVariant, height: 1.4)),
+          Text(
+            reply.message,
+            style: const TextStyle(
+              fontSize: 14,
+              color: AppColors.onSurfaceVariant,
+              height: 1.4,
+            ),
+          ),
         ],
       ),
     );
@@ -237,10 +352,21 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
 
   Widget _buildWriteReplyBar() {
     return Container(
-      padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: MediaQuery.of(context).padding.bottom + 16),
+      padding: EdgeInsets.only(
+        left: 24,
+        right: 24,
+        top: 16,
+        bottom: MediaQuery.of(context).padding.bottom + 16,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 24, offset: const Offset(0, -4))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 24,
+            offset: const Offset(0, -4),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -251,8 +377,14 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
                 hintText: 'Write a reply...',
                 filled: true,
                 fillColor: AppColors.surfaceContainerHighest,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
               ),
               style: const TextStyle(fontSize: 14, color: AppColors.onSurface),
             ),
