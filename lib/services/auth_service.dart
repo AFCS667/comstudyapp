@@ -9,11 +9,22 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    return await _supabase.auth.signUp(
+    final response = await _supabase.auth.signUp(
       email: email,
       password: password,
       data: {'username': name},
     );
+
+    // Create profile after successful signup
+    final userId = response.user?.id;
+    if (userId != null) {
+      await _supabase.from('profiles').insert({
+        'id': userId,
+        'full_name': name,
+      });
+    }
+
+    return response;
   }
 
   // Login

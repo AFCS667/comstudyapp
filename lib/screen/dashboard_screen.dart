@@ -25,17 +25,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _loadData();
   }
 
-  Future<void> _loadUserData() async {
-    // Simulasi pengambilan data user dari server
+  Future<void> _loadData() async {
     final user = Supabase.instance.client.auth.currentUser;
-    if(user != null){
-      setState(() {
-        _username = user.userMetadata?['username'] ?? user.email ?? 'User';
-      });
-    }
+    if (!mounted) return;
+    setState(() {
+      if (user != null) {
+        _username =
+            user.userMetadata?['username'] ?? user.email ?? 'User';
+      }
+    });
   }
 
   @override
@@ -119,7 +120,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-          const Icon(Icons.search, color: Colors.white),
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CoursesScreen()),
+            ),
+            child: const Icon(Icons.search, color: Colors.white),
+          ),
         ],
       ),
     );
@@ -128,27 +135,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFE3E2E6),
-          borderRadius: BorderRadius.circular(16),
+      child: GestureDetector(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const CoursesScreen()),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Icon(Icons.search, color: onBackground.withAlpha(153)), // 0.6 * 255
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Search for courses, mentors...',
-                style: TextStyle(
-                  color: onBackground.withAlpha(153), // 0.6 * 255
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFE3E2E6),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Icon(Icons.search,
+                  color: onBackground.withAlpha(153)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Search for courses, mentors...',
+                  style: TextStyle(
+                    color: onBackground.withAlpha(153),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -276,18 +291,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(13), // 0.05 * 255
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CoursesScreen(),
                 ),
-              ],
-            ),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(13),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
@@ -391,6 +415,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ],
             ),
+          ),
           ),
         ],
       ),

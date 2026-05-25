@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:comstudyapp/screen/course_detail.dart';
+import '../main.dart';
+import '../models/course_model.dart';
 import '../theme/app_colors.dart';
 
 class CoursesScreen extends StatefulWidget {
@@ -10,6 +12,50 @@ class CoursesScreen extends StatefulWidget {
 }
 
 class _CoursesScreenState extends State<CoursesScreen> {
+  List<Course> _courses = [];
+  List<Course> _filteredCourses = [];
+  bool _isLoading = true;
+  final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCourses();
+  }
+
+  Future<void> _fetchCourses() async {
+    final data = await supabase
+        .from('courses')
+        .select('id, title, mentor_name, rating, total_lessons')
+        .order('title');
+    final courses = (data as List)
+        .map((e) => Course.fromJson(e as Map<String, dynamic>))
+        .toList();
+    if (!mounted) return;
+    setState(() {
+      _courses = courses;
+      _filteredCourses = courses;
+      _isLoading = false;
+    });
+  }
+
+  void _filterCourses(String query) {
+    final lower = query.toLowerCase();
+    setState(() {
+      _filteredCourses = _courses
+          .where((c) =>
+              c.title.toLowerCase().contains(lower) ||
+              c.mentorName.toLowerCase().contains(lower))
+          .toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,21 +135,43 @@ class _CoursesScreenState extends State<CoursesScreen> {
           color: const Color(0xFFE3E2E6),
           borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Row(
           children: [
-            Icon(Icons.search, color: AppColors.onBackground.withValues(alpha: 0.6)),
+            Icon(Icons.search,
+                color: AppColors.onBackground.withValues(alpha: 0.6)),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                'Search courses...',
-                style: TextStyle(
-                  color: AppColors.onBackground.withValues(alpha: 0.6),
+              child: TextField(
+                controller: _searchController,
+                onChanged: _filterCourses,
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
+                decoration: InputDecoration(
+                  hintText: 'Search courses...',
+                  hintStyle: TextStyle(
+                    color: AppColors.onBackground.withValues(alpha: 0.6),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                ),
               ),
             ),
+            if (_searchController.text.isNotEmpty)
+              GestureDetector(
+                onTap: () {
+                  _searchController.clear();
+                  _filterCourses('');
+                },
+                child: Icon(Icons.close,
+                    color: AppColors.onBackground.withValues(alpha: 0.6),
+                    size: 20),
+              ),
           ],
         ),
       ),
@@ -152,13 +220,14 @@ class _CoursesScreenState extends State<CoursesScreen> {
     required double progress,
     required String lessons,
     required String imageUrl,
+    String? courseId,
   }) {
     final percentText = '${(progress * 100).round()}%';
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const CourseDetailScreen()),
+          MaterialPageRoute(builder: (_) => CourseDetailScreen(courseId: courseId ?? _courses.firstOrNull?.id)),
         );
       },
       child: Container(
@@ -248,36 +317,21 @@ class _CoursesScreenState extends State<CoursesScreen> {
   }
 
   Widget _buildBrowseAll() {
-    final courses = [
-      {
-        'title': 'Introduction to Curator Mindset',
-        'mentor': 'Dr. Julian Vance',
-        'rating': '4.9',
-        'lessons': '24',
-        'color': AppColors.primaryContainer,
-      },
-      {
-        'title': 'Typography & Spatial Design',
-        'mentor': 'Sarah Chen',
-        'rating': '4.8',
-        'lessons': '18',
-        'color': AppColors.secondary,
-      },
-      {
-        'title': 'Digital Curation Systems',
-        'mentor': 'Marcus Roe',
-        'rating': '4.7',
-        'lessons': '20',
-        'color': AppColors.tertiary,
-      },
-      {
-        'title': 'History of Modern Art',
-        'mentor': 'Elena L.',
-        'rating': '4.6',
-        'lessons': '16',
-        'color': AppColors.primary,
-      },
+    if (_isLoading) {
+      return const Padding(
+        padding: EdgeInsets.all(48),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final accentColors = [
+      AppColors.primaryContainer,
+      AppColors.secondary,
+      AppColors.tertiary,
+      AppColors.primary,
     ];
+
+    final isSearching = _searchController.text.isNotEmpty;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -287,54 +341,73 @@ class _CoursesScreenState extends State<CoursesScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Browse All',
-                style: TextStyle(
+              Text(
+                isSearching
+                    ? 'Results (${_filteredCourses.length})'
+                    : 'Browse All',
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontFamily: 'Manrope',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                'SEE ALL',
-                style: TextStyle(
-                  color: AppColors.secondary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
+              if (!isSearching)
+                Text(
+                  'SEE ALL',
+                  style: TextStyle(
+                    color: AppColors.secondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.75,
+          if (_filteredCourses.isEmpty)
+            const Padding(
+              padding: EdgeInsets.all(32),
+              child: Center(
+                child: Text(
+                  'No courses found',
+                  style: TextStyle(
+                    color: AppColors.onSurfaceVariant,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            )
+          else
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.75,
+              ),
+              itemCount: _filteredCourses.length,
+              itemBuilder: (context, index) {
+                final course = _filteredCourses[index];
+                return _buildBrowseCard(
+                  courseId: course.id,
+                  title: course.title,
+                  mentor: course.mentorName,
+                  rating: course.rating.toStringAsFixed(1),
+                  lessons: '${course.totalLessons}',
+                  accentColor: accentColors[index % accentColors.length],
+                );
+              },
             ),
-            itemCount: courses.length,
-            itemBuilder: (context, index) {
-              final course = courses[index];
-              return _buildBrowseCard(
-                title: course['title'] as String,
-                mentor: course['mentor'] as String,
-                rating: course['rating'] as String,
-                lessons: course['lessons'] as String,
-                accentColor: course['color'] as Color,
-              );
-            },
-          ),
         ],
       ),
     );
   }
 
   Widget _buildBrowseCard({
+    required String courseId,
     required String title,
     required String mentor,
     required String rating,
@@ -345,7 +418,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const CourseDetailScreen()),
+          MaterialPageRoute(builder: (_) => CourseDetailScreen(courseId: courseId)),
         );
       },
       child: Container(
